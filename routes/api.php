@@ -7,6 +7,8 @@ use App\Http\Controllers\create_post;
 use App\Http\Controllers\read_post;
 use App\Http\Controllers\delete_post;
 use App\Http\Controllers\update_post;
+use App\Http\Controllers\viewuserdetails;
+
 
 
 
@@ -40,6 +42,9 @@ Route::post('/create_post',[create_post::class,'post']);
 Route::post('/read_post',[read_post::class,'read']);
 Route::post('/delete_post',[delete_post::class,'delete']);
 Route::post('/update_post',[update_post::class,'update']);
+
+Route::post('/showprofile',[viewuserdetails::class,'showprofile']);
+
 
 
 
