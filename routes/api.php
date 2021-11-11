@@ -36,6 +36,8 @@ Route::group(['middleware'=>'api','perfix'=>'auth'],function($router){
     Route::post('/login',[UserController::class,'login']);
     Route::get('/welcome/{email}/{verify_email}',[UserController::class,'welcome']);
     Route::post('/logout',[UserController::class,'logout']);
+    Route::post('/readInfo',[UserController::class,'readInfo']);
+
 });
 
 Route::group(['middleware'=>'customauth'],function($router)
@@ -46,7 +48,7 @@ Route::group(['middleware'=>'customauth'],function($router)
     Route::post('/update_post',[UpdatePostController ::class,'update']);
     
     Route::post('/showprofile',[UserInfoController::class,'showprofile']); 
-    
+
 
 });
 

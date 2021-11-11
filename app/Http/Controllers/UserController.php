@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-       $this->middleware('auth:api',['except'=>['login','register','welcome','logout']]) ;
+       $this->middleware('auth:api',['except'=>['login','register','welcome','logout','readInfo']]) ;
     }
     public function register(Request $request)//sign_up
     {
@@ -132,6 +132,24 @@ class UserController extends Controller
       {
         return response(['message'=>'Token Error Please Login Again']);
     }
+    }
+
+    public function readInfo(Request $request)
+    {
+        $key=$request->access_token;
+      
+        $data = DB::table('users')->where('remember_token', $key)->get();
+        $wordCount = count($data);
+        if($wordCount > 0)
+        {
+            $userid=$data[0]->id;
+            $sql=User::with("allUserPost")->where('id',$userid)->get();
+            return response(['message'=>$sql]);
+        }
+        else
+        {
+          return response(['message'=>'Token Error Please Login Again']);
+      }
     }
 }
 
