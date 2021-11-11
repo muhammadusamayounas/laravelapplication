@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\post;
 use Illuminate\Support\Facades\DB;
 
-class update_post extends Controller
+class UpdatePostController extends Controller
 {
     public function update(Request $request)
     {

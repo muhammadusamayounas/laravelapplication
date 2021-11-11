@@ -6,9 +6,9 @@ use App\Models\post;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-class read_post extends Controller
+class UserInfoController extends Controller
 {
-    public function read(Request $request)
+    public function showprofile(Request $request)
     {
       $key=$request->access_token;     
       $data = DB::table('users')->where('remember_token', $key)->get();//query to check token is present or not
@@ -17,7 +17,7 @@ class read_post extends Controller
       if($wordCount > 0)
       {
           $id=$data[0]->id;//geting user id
-          $data = DB::table('posts')->where('user_id', $id)->get();//query to read post data on the bases of user id 
+          $data = DB::table('users')->where('id', $id)->get();//query to read post data on the bases of user id 
           return response()->json(['message'=>$data]);
       }
       else
@@ -25,5 +25,4 @@ class read_post extends Controller
           return response(['message'=>'Token Error Please Login Again']);
       }
     }
-
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Mail\testmail;
 
-class signuplogin extends Controller
+class UserController extends Controller
 {
     public function __construct()
     {

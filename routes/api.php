@@ -2,12 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\signuplogin;
-use App\Http\Controllers\create_post;
-use App\Http\Controllers\read_post;
-use App\Http\Controllers\delete_post;
-use App\Http\Controllers\update_post;
-use App\Http\Controllers\viewuserdetails;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CreatePostController;
+use App\Http\Controllers\ReadPostController;
+use App\Http\Controllers\DeletePostController;
+use App\Http\Controllers\UpdatePostController;
+use App\Http\Controllers\UserInfoController;
 
 
 
@@ -32,19 +32,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware'=>'api','perfix'=>'auth'],function($router){
     
-    Route::post('/register',[signuplogin::class,'register']);
-    Route::post('/login',[signuplogin::class,'login']);
-    Route::get('/welcome/{email}/{verify_email}',[signuplogin::class,'welcome']);
-    Route::post('/logout',[signuplogin::class,'logout']);
+    Route::post('/register',[UserController::class,'register']);
+    Route::post('/login',[UserController::class,'login']);
+    Route::get('/welcome/{email}/{verify_email}',[UserController::class,'welcome']);
+    Route::post('/logout',[UserController::class,'logout']);
 });
 
-Route::post('/create_post',[create_post::class,'post']);
-Route::post('/read_post',[read_post::class,'read']);
-Route::post('/delete_post',[delete_post::class,'delete']);
-Route::post('/update_post',[update_post::class,'update']);
+Route::group(['middleware'=>'customauth'],function($router)
+{
+    Route::post('/create_post',[CreatePostController::class,'post']);
+    Route::post('/read_post',[ReadPostController::class,'read']);
+    Route::post('/delete_post',[DeletePostController::class,'delete']);
+    Route::post('/update_post',[UpdatePostController ::class,'update']);
+    
+    Route::post('/showprofile',[UserInfoController::class,'showprofile']); 
+    
 
-Route::post('/showprofile',[viewuserdetails::class,'showprofile']);
-
-
+});
 
 

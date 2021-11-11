@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 
-class create_post extends Controller
+class CreatePostController extends Controller
 {
     public function post(Request $request)
     {

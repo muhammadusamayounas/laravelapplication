@@ -6,10 +6,9 @@ use App\Models\post;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-class delete_post extends Controller
+class ReadPostController extends Controller
 {
-
-    public function delete(Request $request)
+    public function read(Request $request)
     {
       $key=$request->access_token;     
       $data = DB::table('users')->where('remember_token', $key)->get();//query to check token is present or not
@@ -17,13 +16,14 @@ class delete_post extends Controller
 
       if($wordCount > 0)
       {
-          $postid=$request->id; 
-          $data = DB::table('posts')->where('id', $postid)->delete();//query to read post data on the bases of user id 
-          return response()->json(['message'=>'Post Deleted']);
+          $id=$data[0]->id;//geting user id
+          $data = DB::table('posts')->where('user_id', $id)->get();//query to read post data on the bases of user id 
+          return response()->json(['message'=>$data]);
       }
       else
       {
           return response(['message'=>'Token Error Please Login Again']);
       }
     }
+
 }
