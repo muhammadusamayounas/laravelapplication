@@ -18,6 +18,7 @@ class DeletePostController extends Controller
       if($wordCount > 0)
       {
           $postid=$request->id; 
+          DB::table('comments')->where('post_id',$postid)->delete();
           $data = DB::table('posts')->where('id', $postid)->delete();//query to read post data on the bases of user id 
           return response()->json(['message'=>'Post Deleted']);
       }

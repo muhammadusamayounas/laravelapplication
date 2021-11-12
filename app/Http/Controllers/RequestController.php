@@ -12,7 +12,7 @@ class RequestController extends Controller
     function addFriend(Request $request)
     {
         $validation = Validator::make($request->all(),[
-            'acccess_token'      =>  'required',
+            'acccess_token' =>  'required',
             'email'     =>  'required|email',
         ]);
 
@@ -23,11 +23,9 @@ class RequestController extends Controller
         else
         {
             $user = new Friend;
-        
             $access_token = $user->token = $request->input('access_token');
             $email = $user->email = $request->input('email');
-            
-    
+           
             if(!empty($access_token))
             {
                 $user1 = DB::table('users')->where(['remember_token' => $access_token])->get();
@@ -35,16 +33,14 @@ class RequestController extends Controller
                 $wordcount1 = count($user1);
                 $wordcount2 = count($user2);    
                 $user2_verify = $user2[0]->email_verified_at;
-                $uid1 = $user1[0]->uid;
-                $uid2 = $user1[0]->uid;
-    
-                // get id of user-2
-                $uid2 = $user2[0]->uid;
+                $id1 = $user1[0]->id;
+  
+                $id2 = $user2[0]->id;
                 // get name of user-2
                 $name2 = $user2[0]->name;
     
                 // get all data of uers-3 from friends table
-                $user3 = DB::table('friends')->where(['user_id1' => $uid1, 'user_id2' => $uid2])->get();
+                $user3 = DB::table('friends')->where(['user_id1' => $id1, 'user_id2' => $id2])->get();
     
                 // get count of all fetch records
                 $wordcount3 = count($user3);
@@ -67,10 +63,10 @@ class RequestController extends Controller
 
                             
                             // user cannot add himself as friend.
-                            if($uid1 != $uid2)
+                            if($id1 != $id2)
                             {
                                 // add data into friends table    
-                                $values = array('user_id1' => $uid1, 'user_id2' => $uid2);
+                                $values = array('user_id1' => $id1, 'user_id2' => $id2);
                                 DB::table('friends')->insert($values);
                 
                                 return response(['Message' => 'Congrats '.$name2.' is your friend now...!!!!']);

@@ -9,29 +9,19 @@ use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Mail\testmail;
+use App\Http\Requests\SignUpRequest;
+use App\Http\Requests\LoginRequest;
 
 class UserController extends Controller
 {
     public function __construct()
     {
-       $this->middleware('auth:api',['except'=>['login','register','welcome','logout','readInfo']]) ;
+       $this->middleware('auth:api',['except'=>['login','register','welcome','logout','readInfo','readComment']]) ;
     }
-    public function register(Request $request)//sign_up
+    public function register(SignUpRequest $request)//sign_up
     {
-
-       $validator=Validator::make($request->all(),[
-        'name'=>'required',
-        'email'=>'required|string|email|unique:users',
-        'password'=>'required|string|confirmed|min:8',
-        'gender'=>'required'
-     ]);
-
-     if($validator->fails())
-     {
-        return response()->json($validator->errors()->toJson(),400);
-     }
          $user=User::create(array_merge(
-             $validator->validated(),
+             $request->validated(),
              ['password'=>bcrypt($request->password)]
          ));
          
@@ -48,7 +38,6 @@ class UserController extends Controller
     }
     public function sendmail($email,$user_token)
     { 
-
         $details=[
             'title'=>'You are successfully sign up to our SocialApp',
              'body'=>'http://127.0.0.1:8000/api/welcome'.'/'.$email.'/'.$user_token];
@@ -57,21 +46,12 @@ class UserController extends Controller
         return "email send";
     }
 
-    public function login(Request $request)//login 
+    public function login(LoginRequest $request)//login 
 
      {
-        $validator=Validator::make($request->all(),[
-            'email'=>'required|email',
-            'password'=>'required|string|min:8'
-        ]);
 
         $email=$request->input('email');//
-        
-        if($validator->fails())
-        {
-            return response()->json($validator->errors(),422);
-        }
-        if(!$token=Auth::attempt($validator->validated()))
+        if(!$token=Auth::attempt($request->validated()))
         {
             return response()->json(['error'=>'Unauthorized'],401);
         }
@@ -83,10 +63,6 @@ class UserController extends Controller
             ]);
         }
      }
-     //public function createNewToken($token)
-     //{
-       //   return response()->json([ 'access_token'=>$token]);
-     //}
      public function welcome($email, $user_token)//email verify
     {
         $sql=DB::table('users')->where('email', $email)->where('email_verified_at', NULL)->get();
@@ -150,6 +126,24 @@ class UserController extends Controller
         {
           return response(['message'=>'Token Error Please Login Again']);
       }
+    }
+   
+     public function readComment(Request $request)
+    {
+        $key=$request->access_token;
+      
+        $data = DB::table('users')->where('remember_token', $key)->get();
+        $wordCount = count($data);
+        if($wordCount > 0)
+        {
+            $userid=$data[0]->id;
+            $sql=User::with("allUserPost","getComments")->where('id',$userid)->get();
+            return response(['message'=>$sql]);
+        }
+        else
+        {
+          return response(['message'=>'Token Error Please Login Again']);
+      } 
     }
 }
 
