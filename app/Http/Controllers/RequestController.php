@@ -6,22 +6,14 @@ use App\Models\Friend;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\FriendRequest;
 
 class RequestController extends Controller
 {  
-    function addFriend(Request $request)
+    function addFriend(FriendRequest $request)
     {
-        $validation = Validator::make($request->all(),[
-            'access_token' =>  'required',
-            'email'     =>  'required|email',
-        ]);
-
-        if($validation->fails())
-        {
-            return response()->json($validation->errors()->toJson(),400);
-        }
-        else
-        {
+            $request->validated();
+            
             $user = new Friend;
             $access_token = $user->token = $request->input('access_token');
             $email = $user->email = $request->input('email');
@@ -77,6 +69,6 @@ class RequestController extends Controller
             {
                 return response(['Message' => 'Login Account Again']);
             }
-        }
+        
     }
 }
