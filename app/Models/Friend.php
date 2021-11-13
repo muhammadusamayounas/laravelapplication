@@ -17,8 +17,7 @@ class Friend extends Model
      * @var string[]
      */
     protected $fillable = [
-        'file',
-        'access',
-        'user_id'
+        'access_token',
+        'email'
     ];
 }

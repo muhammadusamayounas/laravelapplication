@@ -28,7 +28,7 @@ class CommentController extends Controller
         $comments->file = $path;
         
         $comments->save();
-        return response()->json(['message'=>'Post Created Sucessfully']);
+        return response()->json(['message'=>'Commented added']);
 
       } 
    }

@@ -12,7 +12,7 @@ class RequestController extends Controller
     function addFriend(Request $request)
     {
         $validation = Validator::make($request->all(),[
-            'acccess_token' =>  'required',
+            'access_token' =>  'required',
             'email'     =>  'required|email',
         ]);
 
@@ -28,48 +28,30 @@ class RequestController extends Controller
            
             if(!empty($access_token))
             {
-                $user1 = DB::table('users')->where(['remember_token' => $access_token])->get();
-                $user2 = DB::table('users')->where(['email' => $email])->get();
-                $wordcount1 = count($user1);
-                $wordcount2 = count($user2);    
-                $user2_verify = $user2[0]->email_verified_at;
-                $id1 = $user1[0]->id;
+                $requestsender = DB::table('users')->where(['remember_token' => $access_token])->get();
+                $requestreceiver = DB::table('users')->where(['email' => $email])->get();
+                $wordcount1 = count($requestsender);//person is making request
+                $wordcount2 = count($requestreceiver);//person which you are adding as friend   
+                $requestreceiver_verify = $requestreceiver[0]->email_verified_at;
+                $id1 = $requestsender[0]->id;
   
-                $id2 = $user2[0]->id;
-                // get name of user-2
-                $name2 = $user2[0]->name;
-    
-                // get all data of uers-3 from friends table
-                $user3 = DB::table('friends')->where(['user_id1' => $id1, 'user_id2' => $id2])->get();
-    
-                // get count of all fetch records
+                $id2 = $requestreceiver[0]->id;
+                $receivername = $requestreceiver[0]->name;
+                $user3 = DB::table('friends')->where(['user1_id' => $id1, 'user2_id' => $id2])->get();
                 $wordcount3 = count($user3);
-    
-                // this if is for to check num of rows from user3 variable
+
                 if($wordcount3 == 0)
                 {
-                    // to check if friend user is email-verified or not
                     if($wordcount1 > 0 && $wordcount2 > 0)
                     {
-                        // this if is for to check num of rows from user1 variable  
-                        // this if is for to check num of rows from user2 variable  
-                        if(!empty($user2_verify))
+                        if(!empty($requestreceiver_verify))
                         {
-
-                            // add data into friends table    
-                            //$values = array('user_id1' => $uid1, 'user_id2' => $uid2);
-                            //DB::table('friends')->insert($values);
-                            //return response(['Message' => 'Congrats '.$name2.' is your friend now...!!!!']);
-
-                            
-                            // user cannot add himself as friend.
                             if($id1 != $id2)
-                            {
-                                // add data into friends table    
-                                $values = array('user_id1' => $id1, 'user_id2' => $id2);
+                            {   
+                                $values = array('user1_id' => $id1, 'user2_id' => $id2);
                                 DB::table('friends')->insert($values);
                 
-                                return response(['Message' => 'Congrats '.$name2.' is your friend now...!!!!']);
+                                return response(['Message' => 'Congrats '.$receivername.' is your friend']);
                             }
                             else
                             {
@@ -78,22 +60,22 @@ class RequestController extends Controller
                         }       
                         else
                         {
-                            return response(['Message' => 'Friend not Found / Friend is not verified']);                           
+                            return response(['Message' => 'Account not found']);                           
                         } 
                     }
                     else
                     {
-                        return response(['Message' => 'Friend not Found / Something went wrong with friend.']);
+                        return response(['Message' => 'Error']);
                     }
                 }
                 else
                 {
-                    return response(['Message' => 'Alread your Friend. No need to send friend request again.']);
+                    return response(['Message' => 'Alread your Friend you cannot send him a friend request']);
                 }
             }
             else
             {
-                return response(['Message' => 'Login Account Again / Token expired.']);
+                return response(['Message' => 'Login Account Again']);
             }
         }
     }
