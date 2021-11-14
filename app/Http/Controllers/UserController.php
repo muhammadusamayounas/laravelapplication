@@ -13,6 +13,7 @@ use App\Http\Requests\SignUpRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ForgetPasswordRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\LoginAccessRequest;
 
 class UserController extends Controller
 {
@@ -90,10 +91,11 @@ class UserController extends Controller
          return response(['Result'=>'Your Email has been Already Verified']);
        }
     }
-    public function logout(Request $request)
+    public function logout(LoginAccessRequest $request)
     {
+        
+      $request->validated();
       $key=$request->access_token;
-      
       $data = DB::table('users')->where('remember_token', $key)->get();
       $wordCount = count($data);
       if($wordCount > 0)
@@ -178,10 +180,10 @@ class UserController extends Controller
             return response(['Message'=>'Please Enter Valid Mail.']); 
         }
     }
-    public function readInfo(Request $request)//funtion will return the user information and posts by that user
+    public function readInfo(LoginAccessRequest $request)//funtion will return the user information and posts by that user
     {
+        $request->validated();
         $key=$request->access_token;
-      
         $data = DB::table('users')->where('remember_token', $key)->get();
         $wordCount = count($data);
         if($wordCount > 0)
@@ -196,10 +198,10 @@ class UserController extends Controller
       }
     }
    
-     public function readComment(Request $request)//funtion will return the user information and posts by that user and comments on that post
+     public function readComment(LoginAccessRequest $request)//funtion will return the user information and posts by that user and comments on that post
     {
+        $request->validated();
         $key=$request->access_token;
-      
         $data = DB::table('users')->where('remember_token', $key)->get();
         $wordCount = count($data);
         if($wordCount > 0)
@@ -213,10 +215,10 @@ class UserController extends Controller
           return response(['message'=>'Token Error Please Login Again']);
       } 
     }
-    public function seeAllfriend(Request $request)//funtion will return the user information and posts by that user
+    public function seeAllfriend(LoginAccessRequest $request)//funtion will return the user information and posts by that user
     {
+        $request->validated();
         $key=$request->access_token;
-      
         $data = DB::table('users')->where('remember_token', $key)->get();
         $wordCount = count($data);
         if($wordCount > 0)

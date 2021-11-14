@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginAccessRequest;
 use App\Models\post;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class UserInfoController extends Controller
 {
-    public function showprofile(Request $request)//function return the profile information of the user
+    public function showprofile(LoginAccessRequest $request)//function return the profile information of the user
     {
+      $request->validated();
       $key=$request->access_token;     
       $data = DB::table('users')->where('remember_token', $key)->get();//query to check token is present or not
       $wordCount = count($data);

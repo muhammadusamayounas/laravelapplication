@@ -48,7 +48,10 @@ Route::group(['middleware'=>'customauth'],function($router)
     
     Route::post('/showprofile',[UserInfoController::class,'showprofile']); 
 
-    Route::post('/comment',[CommentController::class,'createComment']); 
+    Route::post('/comment',[CommentController::class,'createComment']);
+    Route::post('/updateComment',[CommentController::class,'updateComment']);
+    Route::post('/deleteComment',[CommentController::class,'deleteComment']);
+
 
     Route::post('/addFriend',[RequestController::class,'addFriend']);
     Route::post('/deleteFriend',[RequestController::class,'deleteFriend']);

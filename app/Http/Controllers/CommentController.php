@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\UpdateandDeleteCommentRequest;
 
 
 
@@ -33,33 +34,62 @@ class CommentController extends Controller
       } 
    }
 
-//    public function updateComment(Request $request)
-//    {
+   public function updateComment(UpdateandDeleteCommentRequest $request)
+   {
+       $request->validated();
+       $key=$request->access_token;
+       $comment=$request->comment;
+       $comment_id=$request->comment_id;
+       $data=DB::table('users')->where('remember_token',$key)->get();
+       if(count($data)>0)
+       {
+         $id=$data[0]->id;
+         $path = $request->file('file')->store('post');
+         $updateDetails = [
+          'user_id' => $id,
+          'file' => $path,
+          'comment'=> $comment
+          ];
+         if(DB::table('comments')->where(['id'=> $comment_id,'user_id'=> $id])->update($updateDetails)==1)
+         {
+            return response()->json(["messsage" => "Comment Updated successfully"]);
+         }
+         else
+         {
+          return response()->json(["messsage" => "You Are Not Allowed To Delete Others Comment"]);
+         }
+       }
+       else
+       {
+        return response()->json(["messsage" => "Login Again"]);
+       }
+   }
 
-//         $key=$request->token;
-//         $data=DB::table('users')->where('remember_token',$key)->get();
-//         $count=count($data);
-//         if($count>0)
-//         {
-//             $userid=$data[0]->id;
-//             $id=$request->id;
-//             $path = $request->file('file')->store('post');          
-//             $updateDetails = [
-//                 'user_id' => $userid,
-//                 'file' => $path,
-//                 'access' => $request->access
-//             ];
-//             DB::table('posts')->where('id',$id)->update($updateDetails);
-
-//             return response()->json(["messsage" => "Post Updated successfully"]);
-//         }
-
-//         else{
-
-//             return response(['message'=>'Token Error Please Login Again']);
-
-//         }
-//     }
+   public function deleteComment(UpdateandDeleteCommentRequest $request)
+   {
+       $request->validated();
+       $key=$request->access_token;
+       $comment_id=$request->comment_id;
+       $data=DB::table('users')->where('remember_token',$key)->get();
+       if(count($data)>0)
+       {
+         $id=$data[0]->id;
+         echo $comment_id;
+         if(DB::table('comments')->where(['id'=> $comment_id,'user_id'=> $id])->delete() == 1)
+         {
+           return response()->json(["messsage" => "Comment Deleted Successfuly"]);
+         }
+         else
+         {
+            return response()->json(["messsage" => "You Are Not Allowed To Delete Others Comment"]);
+         }
+       }
+       else
+       {
+        return response()->json(["messsage" => "You Are Not Login"]);
+       }
+    }
+}
    
 
-}
+
