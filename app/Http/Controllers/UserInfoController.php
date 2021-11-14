@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class UserInfoController extends Controller
 {
-    public function showprofile(Request $request)
+    public function showprofile(Request $request)//function return the profile information of the user
     {
       $key=$request->access_token;     
       $data = DB::table('users')->where('remember_token', $key)->get();//query to check token is present or not

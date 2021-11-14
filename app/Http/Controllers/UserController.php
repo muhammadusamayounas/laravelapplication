@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\testmail;
 use App\Http\Requests\SignUpRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\ForgetPasswordRequest;
+use App\Http\Requests\ChangePasswordRequest;
 
 class UserController extends Controller
 {
@@ -59,7 +61,7 @@ class UserController extends Controller
             DB::table('users')->where('email',$email)->update(['status'=>'1']);//
             DB::table('users')->where('email',$email)->update(['remember_token'=>$token]);//
             return response()->json([
-                'access_token'=>$token
+            'access_token'=>$token
             ]);
         }
      }
@@ -100,17 +102,83 @@ class UserController extends Controller
          $updateDetails = [
             'remember_token' => null,
             'status' =>0
-        ];
-        DB::table('users')->where('id',$userid)->update($updateDetails);  
-        return response(['message'=>'Logout']);  
-      }
+         ];
+         DB::table('users')->where('id',$userid)->update($updateDetails);  
+         return response(['message'=>'Logout']);  
+       }
       else
-      {
-        return response(['message'=>'Token Error Please Login Again']);
-    }
+       {
+          return response(['message'=>'Token Error Please Login Again']);
+       }
     }
 
-    public function readInfo(Request $request)
+    function forgetPassword(ForgetPasswordRequest $request)
+    {
+
+        $request->validated();
+        $user = new User;
+        $getmail = $user->email = $request->input('email');
+        $data = DB::table('users')->where('email', $getmail)->get();
+        
+        if(count($data) > 0)
+        {
+            foreach ($data as $key)
+            {
+                $verfiy =$key->email_verified_at;
+            }
+            if(!empty($verfiy))
+            {
+                $verification_code=rand(1000,9999);
+                DB::table('users')->where('email', $getmail)->update(['verify_token'=> $verification_code]);
+                return response($this->sendNewMail($getmail,$verification_code));
+            }
+            else{
+                return response(['Message'=>'Account is not verified']);
+            }
+        }
+        else{
+            return response(['Message'=>'Email doesnot match Please re enter the email address']);
+        }
+    }
+    function sendNewMail($getmail,$verification_code)
+    {
+        $details=[
+            'title'=> 'Forget Password Verification',
+            'body'=> 'Your OTP is '. $verification_code . ' Please copy and paste the change Password Api'
+        ]; 
+        Mail::to($getmail)->send(new testmail($details));
+        return response(['Message' => 'An OTP has been sent to '.$getmail.' , Please verify and proceed further.']);
+    }
+    function userChangePassword(ChangePasswordRequest $request)
+    {
+        $request->validated();
+        $user = new User;
+        $getmail = $user->email = $request->input('email');
+        $verification_code= $user->verification_code= $request->input('verification_code');
+        $password=bcrypt($request->input('password'));
+        $data = DB::table('users')->where('email', $getmail)->get();
+        $num = count($data);
+        
+        if($num > 0)
+        {
+            foreach ($data as $key)
+            {
+                $getcode=$key->verify_token;
+            }
+            if($getcode==$verification_code)
+            {
+                DB::table('users')->where('email', $getmail)->update(['password'=> $password]);
+                return response(['Message'=>'Your Password has been updated']);
+            }
+            else{
+                return response(['Message'=>'Otp Does Not Match.']);
+            }
+        }
+        else{
+            return response(['Message'=>'Please Enter Valid Mail.']); 
+        }
+    }
+    public function readInfo(Request $request)//funtion will return the user information and posts by that user
     {
         $key=$request->access_token;
       
@@ -128,7 +196,7 @@ class UserController extends Controller
       }
     }
    
-     public function readComment(Request $request)
+     public function readComment(Request $request)//funtion will return the user information and posts by that user and comments on that post
     {
         $key=$request->access_token;
       
@@ -146,7 +214,3 @@ class UserController extends Controller
       } 
     }
 }
-
-
-
-
