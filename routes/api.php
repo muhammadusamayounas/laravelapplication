@@ -36,8 +36,7 @@ Route::group(['middleware'=>'api','perfix'=>'auth'],function($router){
     Route::post('/logout',[UserController::class,'logout']);
     Route::post('/readInfo',[UserController::class,'readInfo']);
     Route::post('/readComment',[UserController::class,'readComment']);
-
-
+    Route::post('/seeAllFriend',[UserController::class,'seeAllFriend']);
 });
 
 Route::group(['middleware'=>'customauth'],function($router)
@@ -51,7 +50,8 @@ Route::group(['middleware'=>'customauth'],function($router)
 
     Route::post('/comment',[CommentController::class,'createComment']); 
 
-    Route::post('/addFriend',[RequestController::class,'addFriend']); 
+    Route::post('/addFriend',[RequestController::class,'addFriend']);
+    Route::post('/deleteFriend',[RequestController::class,'deleteFriend']);
 });
 
 

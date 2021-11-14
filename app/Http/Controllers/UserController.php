@@ -18,7 +18,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-       $this->middleware('auth:api',['except'=>['login','register','welcome','logout','readInfo','readComment']]) ;
+       $this->middleware('auth:api',['except'=>['login','register','welcome','logout','readInfo','readComment','seeAllFriend']]) ;
     }
     public function register(SignUpRequest $request)//sign_up
     {
@@ -212,5 +212,22 @@ class UserController extends Controller
         {
           return response(['message'=>'Token Error Please Login Again']);
       } 
+    }
+    public function seeAllfriend(Request $request)//funtion will return the user information and posts by that user
+    {
+        $key=$request->access_token;
+      
+        $data = DB::table('users')->where('remember_token', $key)->get();
+        $wordCount = count($data);
+        if($wordCount > 0)
+        {
+            $userid=$data[0]->id;
+            $sql=User::with("allUserFriend")->where('id',$userid)->get();
+            return response(['message'=>$sql]);
+        }
+        else
+        {
+          return response(['message'=>'Token Error Please Login Again']);
+      }
     }
 }

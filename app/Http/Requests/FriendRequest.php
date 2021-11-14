@@ -25,7 +25,7 @@ class FriendRequest extends FormRequest
     {
         return [
             'access_token' =>  'required',
-            'email'     =>  'required|email'
+            'name'     =>  'required'
         ];
     }
 }
