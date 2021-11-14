@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\UpdateandDeleteCommentRequest;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\testmail;
 
 
 
 class CommentController extends Controller
 {
-    public function createComment(Request $request)
+    public function createComment(CommentRequest $request)
     {
+      $request->validated();
       $key=$request->access_token;
       $comment=$request->comment; 
       $post_id=$request->post_id;
@@ -21,14 +25,23 @@ class CommentController extends Controller
       if($wordCount > 0)
       {
         $id=$data[0]->id;//geting user id
+        $name=$data[0]->name;
         $comments = new Comment;
         $path = $request->file('file')->store('post');
         $comments->comment=$comment;
         $comments->post_id=$post_id;
         $comments->user_id=$id;
         $comments->file = $path;
-        
         $comments->save();
+        $getid = DB::table('comments')->where('post_id', $post_id)->get();
+        $user_id=$getid[0]->user_id;
+        $getemail = DB::table('users')->where('id', $user_id)->get();
+        $getemail=$getemail[0]->email;
+        $details=[
+          'title'=> 'Comment Notification',
+          'body'=> 'You got a comment on your post by '.$name.' and comment from the user is '.$comment.'',
+      ]; 
+      Mail::to($getemail)->send(new testmail($details));
         return response()->json(['message'=>'Commented added']);
 
       } 

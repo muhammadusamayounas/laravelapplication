@@ -77,5 +77,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Friend::class,"sender_id","id");
     }
+    public function routeNotificationForMail($notification)
+    {
+        // Return email address only...
+        return $this->email_address;
+
+    }
+
 
 }

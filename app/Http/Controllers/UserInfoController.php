@@ -27,4 +27,5 @@ class UserInfoController extends Controller
           return response(['message'=>'Token Error Please Login Again']);
       }
     }
+    
 }

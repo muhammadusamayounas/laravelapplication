@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\post;
@@ -9,9 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class UpdatePostController extends Controller
 {
-    public function update(Request $request)
+    public function update(LoginRequest $request)
     {
 
+        $request->validated();
         $key=$request->token;
         $data=DB::table('users')->where('remember_token',$key)->get();
         $count=count($data);

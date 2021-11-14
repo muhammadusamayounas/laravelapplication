@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginAccessRequest;
 use App\Models\post;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ReadPostController extends Controller
 {
-    public function read(Request $request)
+
+    public function read(LoginAccessRequest $request)
     {
+      $request->validated();
       $key=$request->access_token;     
       $data = DB::table('users')->where('remember_token', $key)->get();//query to check token is present or not
       $wordCount = count($data);
