@@ -11,6 +11,7 @@ class CreatePostController extends Controller
 {
     public function post(PostRequest $request)
     {
+        dd($request->data[0]->id);
       $request->validated();
       $key=$request->access_token;     
       $data = DB::table('users')->where('remember_token', $key)->get();//query to check token is present or not

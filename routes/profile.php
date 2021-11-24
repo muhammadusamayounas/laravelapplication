@@ -23,22 +23,11 @@ use App\Http\Controllers\RequestController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware'=>'customauth'],function($router)
+{
+
+    Route::post('/showprofile',[UserInfoController::class,'showprofile']); 
+
 });
-    
-
-Route::group(['middleware'=>'api','perfix'=>'auth'],function($router){
-    
-    Route::post('/register',[UserController::class,'register']);
-    Route::post('/login',[UserController::class,'login']);
-    Route::get('/welcome/{email}/{verify_email}',[UserController::class,'welcome']);
-    Route::post('/logout',[UserController::class,'logout']);
-    Route::post('/readInfo',[UserController::class,'readInfo']);
-    Route::post('/readComment',[UserController::class,'readComment']);
-    Route::post('/seeAllFriend',[UserController::class,'seeAllFriend']);
-});
-
-
 
 

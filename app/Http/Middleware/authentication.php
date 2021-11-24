@@ -22,7 +22,7 @@ class authentication
           $wordCount = count($data);   
           if($wordCount > 0)
           {
-            return $next($request);
+            return $next($request->merge(["data"=>$data]));
           }
           else
           {
