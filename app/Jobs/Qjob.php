@@ -22,10 +22,10 @@ class Qjob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($details,$mail)
+    public function __construct($mail,$details)
     {
-        $this->details=$details;
         $this->mail=$mail;
+        $this->details=$details;
     }
 
     /**

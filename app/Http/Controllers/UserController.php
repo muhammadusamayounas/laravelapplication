@@ -49,7 +49,7 @@ class UserController extends Controller
        // Mail::to($email)->send(new testmail($details));
        $mail=new Qjob($email,$details);
        dispatch($mail);
-        return "email send";
+       return "email send";
     }
 
     public function login(LoginRequest $request)//login 
