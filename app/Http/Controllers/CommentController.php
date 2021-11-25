@@ -16,16 +16,11 @@ class CommentController extends Controller
 {
     public function createComment(CommentRequest $request)
     {
-      $request->validated();
-      $key=$request->access_token;
-      $comment=$request->comment; 
-      $post_id=$request->post_id;
-      $data = DB::table('users')->where('remember_token', $key)->get();
-      $wordCount = count($data);
-      if($wordCount > 0)
-      {
-        $id=$data[0]->id;//geting user id
-        $name=$data[0]->name;
+
+        $comment=$request->comment; 
+        $post_id=$request->post_id;
+        $id=$request->data[0]->id;//geting user id
+        $name=$request->data[0]->name;
         $comments = new Comment;
         $path = $request->file('file')->store('post');
         $comments->comment=$comment;
@@ -44,21 +39,18 @@ class CommentController extends Controller
       Mail::to($getemail)->send(new testmail($details));
         return response()->json(['message'=>'Commented added']);
 
-      } 
+      
    }
 
    public function updateComment(UpdateandDeleteCommentRequest $request)
    {
-       $request->validated();
-       $key=$request->access_token;
+
+    
        $comment=$request->comment;
        $comment_id=$request->comment_id;
-       $data=DB::table('users')->where('remember_token',$key)->get();
-       if(count($data)>0)
-       {
-         $id=$data[0]->id;
-         $path = $request->file('file')->store('post');
-         $updateDetails = [
+       $id=$request->data[0]->id;//geting user id
+       $path = $request->file('file')->store('post');
+       $updateDetails = [
           'user_id' => $id,
           'file' => $path,
           'comment'=> $comment
@@ -71,23 +63,14 @@ class CommentController extends Controller
          {
           return response()->json(["messsage" => "You Are Not Allowed To Delete Others Comment"]);
          }
-       }
-       else
-       {
-        return response()->json(["messsage" => "Login Again"]);
-       }
+
    }
 
    public function deleteComment(UpdateandDeleteCommentRequest $request)
    {
-       $request->validated();
-       $key=$request->access_token;
+
        $comment_id=$request->comment_id;
-       $data=DB::table('users')->where('remember_token',$key)->get();
-       if(count($data)>0)
-       {
-         $id=$data[0]->id;
-         echo $comment_id;
+       $id=$request->data[0]->id;//geting user id
          if(DB::table('comments')->where(['id'=> $comment_id,'user_id'=> $id])->delete() == 1)
          {
            return response()->json(["messsage" => "Comment Deleted Successfuly"]);
@@ -96,11 +79,7 @@ class CommentController extends Controller
          {
             return response()->json(["messsage" => "You Are Not Allowed To Delete Others Comment"]);
          }
-       }
-       else
-       {
-        return response()->json(["messsage" => "You Are Not Login"]);
-       }
+
     }
 }
    
