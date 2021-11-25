@@ -14,6 +14,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ForgetPasswordRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginAccessRequest;
+use App\Jobs\Qjob;
 
 class UserController extends Controller
 {
@@ -45,7 +46,9 @@ class UserController extends Controller
             'title'=>'You are successfully sign up to our SocialApp',
              'body'=>'http://127.0.0.1:8000/api/welcome'.'/'.$email.'/'.$user_token];
 
-        Mail::to($email)->send(new testmail($details));
+       // Mail::to($email)->send(new testmail($details));
+       $mail=new Qjob($email,$details);
+       dispatch($mail);
         return "email send";
     }
 
@@ -148,7 +151,9 @@ class UserController extends Controller
             'title'=> 'Forget Password Verification',
             'body'=> 'Your OTP is '. $verification_code . ' Please copy and paste the change Password Api'
         ]; 
-        Mail::to($getmail)->send(new testmail($details));
+        //Mail::to($getmail)->send(new testmail($details));
+         $mail=new Qjob($getmail,$details);
+         dispatch($getmail);
         return response(['Message' => 'An OTP has been sent to '.$getmail.' , Please verify and proceed further.']);
     }
     function userChangePassword(ChangePasswordRequest $request)
