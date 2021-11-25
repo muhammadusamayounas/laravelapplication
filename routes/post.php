@@ -26,9 +26,9 @@ use App\Http\Controllers\RequestController;
 Route::group(['middleware'=>'customauth'],function($router)
 {
     Route::post('/create_post',[CreatePostController::class,'post']);
-    Route::post('/read_post',[ReadPostController::class,'read']);
-    Route::post('/delete_post',[DeletePostController::class,'delete']);
-    Route::post('/update_post',[UpdatePostController ::class,'update']);
+    Route::post('/read_post',[CreatePostController::class,'read']);
+    Route::post('/delete_post',[CreatePostController::class,'delete']);
+    Route::post('/update_post',[CreatePostController::class,'update']);
 
 });
 
