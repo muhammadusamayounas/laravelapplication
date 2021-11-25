@@ -12,14 +12,7 @@ class UpdatePostController extends Controller
 {
     public function update(LoginRequest $request)
     {
-
-        $request->validated();
-        $key=$request->token;
-        $data=DB::table('users')->where('remember_token',$key)->get();
-        $count=count($data);
-        if($count>0)
-        {
-            $userid=$data[0]->id;
+            $userid=$request->data[0]->id;//geting user id
             $id=$request->id;
             $path = $request->file('file')->store('post');          
             $updateDetails = [
@@ -30,15 +23,6 @@ class UpdatePostController extends Controller
             DB::table('posts')->where('id',$id)->update($updateDetails);
 
             return response()->json(["messsage" => "Post Updated successfully"]);
-        }
 
-        else{
-
-            return response(['message'=>'Token Error Please Login Again']);
-
-        }
-    }
-
-
-    
+    } 
 }
